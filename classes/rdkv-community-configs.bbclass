@@ -83,3 +83,20 @@ ctrlm_community_remote_fix() {
         bbnote "Detected default RCU Control manager configurations, skipping Community RCU Control manager configuration."
     fi
 }
+
+# Enable Miracast ports based on distro
+ROOTFS_POSTPROCESS_COMMAND:append = "${@bb.utils.contains('DISTRO_FEATURES', 'ENABLE_MIRACAST', ' update_ports_in_iptables; ', '', d)}"
+update_ports_in_iptables() {
+    if [ -f "${IMAGE_ROOTFS}/lib/rdk/iptables_init" ]; then
+        sed -i "/${IPV4_BIN} -N SSHDROPLOG/i \\
+    # MiracastService plugin need to communicate with client through below ports\\
+    # 7236 - RTSP session communication\\
+    # 1990 - UDP streaming for Mirroring\\
+    # 67 - DHCP server to provide ip to clients through P2P group interface\\
+    \$IPV4_BIN -A INPUT -p tcp -s 192.168.0.0/16 --dport 7236 -j ACCEPT\\
+    \$IPV4_BIN -A INPUT -p udp -s 192.168.0.0/16 --dport 1990 -j ACCEPT\\
+    \$IPV4_BIN -A INPUT -i p2p+ -p udp --dport 67 -j ACCEPT\\ \\n" "${IMAGE_ROOTFS}/lib/rdk/iptables_init"
+    else
+        bbnote "iptables_init file not found. Skipping Miracast iptables rules."
+    fi
+}
