@@ -20,7 +20,9 @@ dobby_generic_config_patch() {
 # Mandatory: WebPA endpoint needs to be configured in 'partners_defaults.json' by the Operator.
 ROOTFS_POSTPROCESS_COMMAND:append = " update_community_webpa_url;"
 update_community_webpa_url() {
-    bbnote "Updating WebPA URL in partners_defaults.json..."
+    bbnote "Checking if ${IMAGE_ROOTFS}/etc/partners_defaults.json exists..."
+    if [ -f "${IMAGE_ROOTFS}/etc/partners_defaults.json" ]; then
+        bbnote "partners_defaults.json found, updating WebPA URL..."
     python3 << EOF
 import json
 
@@ -34,6 +36,9 @@ data['community']['Device.X_RDK_WebPA_Server.URL'] = "http://webpa.rdkcentral.co
 with open(file_path, 'w') as file:
     json.dump(data, file, indent=4)
 EOF
+    else
+        bbnote "${IMAGE_ROOTFS}/etc/partners_defaults.json not found, skipping WebPA URL update."
+    fi
 }
 
 # Mandatory: Some of the RFC configurations for healthy runtime.
@@ -60,8 +65,18 @@ map_rdkshell_keys() {
 # Optional: To expose access of Thunder to the local network for Tests/Tools.
 ROOTFS_POSTPROCESS_COMMAND:append = " wpeframework_binding_patch;"
 wpeframework_binding_patch() {
-    bbnote "Changing Thunder 'binding' to '0.0.0.0'..."
-    sed -i "s/127.0.0.1/0.0.0.0/g" ${IMAGE_ROOTFS}/etc/WPEFramework/config.json
+    bbnote "Checking if ${IMAGE_ROOTFS}/etc/WPEFramework/config.json exists..."
+    if [ -f "${IMAGE_ROOTFS}/etc/WPEFramework/config.json" ]; then
+        sed -i "s/127.0.0.1/0.0.0.0/g" ${IMAGE_ROOTFS}/etc/WPEFramework/config.json
+
+        if grep -q "0.0.0.0" "${IMAGE_ROOTFS}/etc/WPEFramework/config.json"; then
+            bbnote "Thunder 'binding' successfully updated to '0.0.0.0'."
+        else
+            bbwarn "Thunder 'binding' update failed. Check the sed command or config file content."
+        fi
+    else
+        bbnote "${IMAGE_ROOTFS}/etc/WPEFramework/config.json not found. Skipping Thunder 'binding' patch."
+    fi
 }
 
 # Optional: SSH keys are installed by the Operator to ensure the device is accessible securely if required.
