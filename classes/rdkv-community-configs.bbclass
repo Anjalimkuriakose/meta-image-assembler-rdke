@@ -20,7 +20,9 @@ dobby_generic_config_patch() {
 # Mandatory: WebPA endpoint needs to be configured in 'partners_defaults.json' by the Operator.
 ROOTFS_POSTPROCESS_COMMAND:append = " update_community_webpa_url;"
 update_community_webpa_url() {
-    bbnote "Updating WebPA URL in partners_defaults.json..."
+    bbnote "Checking if ${IMAGE_ROOTFS}/etc/partners_defaults.json exists..."
+    if [ -f "${IMAGE_ROOTFS}/etc/partners_defaults.json" ]; then
+        bbnote "partners_defaults.json found, updating WebPA URL..."
     python3 << EOF
 import json
 
@@ -34,6 +36,9 @@ data['community']['Device.X_RDK_WebPA_Server.URL'] = "http://webpa.rdkcentral.co
 with open(file_path, 'w') as file:
     json.dump(data, file, indent=4)
 EOF
+    else
+        bbnote "${IMAGE_ROOTFS}/etc/partners_defaults.json not found, skipping WebPA URL update."
+    fi
 }
 
 # Mandatory: Some of the RFC configurations for healthy runtime.
@@ -60,8 +65,18 @@ map_rdkshell_keys() {
 # Optional: To expose access of Thunder to the local network for Tests/Tools.
 ROOTFS_POSTPROCESS_COMMAND:append = " wpeframework_binding_patch;"
 wpeframework_binding_patch() {
-    bbnote "Changing Thunder 'binding' to '0.0.0.0'..."
-    sed -i "s/127.0.0.1/0.0.0.0/g" ${IMAGE_ROOTFS}/etc/WPEFramework/config.json
+    bbnote "Checking if ${IMAGE_ROOTFS}/etc/WPEFramework/config.json exists..."
+    if [ -f "${IMAGE_ROOTFS}/etc/WPEFramework/config.json" ]; then
+        sed -i "s/127.0.0.1/0.0.0.0/g" ${IMAGE_ROOTFS}/etc/WPEFramework/config.json
+
+        if grep -q "0.0.0.0" "${IMAGE_ROOTFS}/etc/WPEFramework/config.json"; then
+            bbnote "Thunder 'binding' successfully updated to '0.0.0.0'."
+        else
+            bbwarn "Thunder 'binding' update failed. Check the sed command or config file content."
+        fi
+    else
+        bbnote "${IMAGE_ROOTFS}/etc/WPEFramework/config.json not found. Skipping Thunder 'binding' patch."
+    fi
 }
 
 # Optional: SSH keys are installed by the Operator to ensure the device is accessible securely if required.
@@ -81,5 +96,22 @@ ctrlm_community_remote_fix() {
         install -m 0644 ${MANIFEST_PATH_RDK_IMAGES}/conf/rdk-bt-rcu-config.json ${IMAGE_ROOTFS}/etc/ctrlm_config.json
     else
         bbnote "Detected default RCU Control manager configurations, skipping Community RCU Control manager configuration."
+    fi
+}
+
+# Enable Miracast ports based on distro
+ROOTFS_POSTPROCESS_COMMAND:append = "${@bb.utils.contains('DISTRO_FEATURES', 'ENABLE_MIRACAST', ' update_ports_in_iptables; ', '', d)}"
+update_ports_in_iptables() {
+    if [ -f "${IMAGE_ROOTFS}/lib/rdk/iptables_init" ]; then
+        sed -i "/${IPV4_BIN} -N SSHDROPLOG/i \\
+    # MiracastService plugin need to communicate with client through below ports\\
+    # 7236 - RTSP session communication\\
+    # 1990 - UDP streaming for Mirroring\\
+    # 67 - DHCP server to provide ip to clients through P2P group interface\\
+    \$IPV4_BIN -A INPUT -p tcp -s 192.168.0.0/16 --dport 7236 -j ACCEPT\\
+    \$IPV4_BIN -A INPUT -p udp -s 192.168.0.0/16 --dport 1990 -j ACCEPT\\
+    \$IPV4_BIN -A INPUT -i p2p+ -p udp --dport 67 -j ACCEPT\\ \\n" "${IMAGE_ROOTFS}/lib/rdk/iptables_init"
+    else
+        bbnote "iptables_init file not found. Skipping Miracast iptables rules."
     fi
 }

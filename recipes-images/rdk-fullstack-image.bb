@@ -1,6 +1,9 @@
 SUMMARY = "RDK Full Stack image"
 
 LICENSE = "MIT"
+
+DEPENDS += "nss-native"
+
 IMAGE_INSTALL = " \
                  packagegroup-vendor-layer \
                  packagegroup-middleware-layer \
