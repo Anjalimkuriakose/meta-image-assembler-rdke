@@ -31,7 +31,7 @@ file_path = "${IMAGE_ROOTFS}/etc/partners_defaults.json"
 with open(file_path, 'r') as file:
     data = json.load(file)
 
-data['community']['Device.X_RDK_WebPA_Server.URL'] = "http://webpa.rdkcentral.com:8080"
+data['community']['Device.X_RDK_WebPA_Server.URL'] = "https://webpa.rdkcentral.com:8080"
 
 with open(file_path, 'w') as file:
     json.dump(data, file, indent=4)
