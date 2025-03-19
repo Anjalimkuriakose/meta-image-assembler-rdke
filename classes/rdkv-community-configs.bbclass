@@ -17,30 +17,6 @@ dobby_generic_config_patch() {
     fi
 }
 
-# Mandatory: WebPA endpoint needs to be configured in 'partners_defaults.json' by the Operator.
-ROOTFS_POSTPROCESS_COMMAND:append = " update_community_webpa_url;"
-update_community_webpa_url() {
-    bbnote "Checking if ${IMAGE_ROOTFS}/etc/partners_defaults.json exists..."
-    if [ -f "${IMAGE_ROOTFS}/etc/partners_defaults.json" ]; then
-        bbnote "partners_defaults.json found, updating WebPA URL..."
-    python3 << EOF
-import json
-
-file_path = "${IMAGE_ROOTFS}/etc/partners_defaults.json"
-
-with open(file_path, 'r') as file:
-    data = json.load(file)
-
-data['community']['Device.X_RDK_WebPA_Server.URL'] = "https://webpa.rdkcentral.com:8080"
-
-with open(file_path, 'w') as file:
-    json.dump(data, file, indent=4)
-EOF
-    else
-        bbnote "${IMAGE_ROOTFS}/etc/partners_defaults.json not found, skipping WebPA URL update."
-    fi
-}
-
 # Mandatory: Some of the RFC configurations for healthy runtime.
 ROOTFS_POSTPROCESS_COMMAND:append = " install_community_rfc_configs;"
 install_community_rfc_configs() {
