@@ -35,189 +35,7 @@
             }
         }
     },
-    "network_rf4ce": {
-        "user_string": "COMCAST",
-        "timeout_key_release": 500,
-        "short_rf_retry_period": 100000,
-        "utterance_duration_max": 10000,
-        "voice_data_retry_max": 0,
-        "voice_csma_backoff_max": 4,
-        "voice_data_backoff_exp_min": 0,
-        "voice_command_encryption": 0,
-        "rib_update_check_interval": 24,
-        "auto_check_validation_period": 500,
-        "link_lost_wait_time": 10000,
-        "update_polling_period": 24,
-        "data_request_wait_time": 3000,
-        "data_request_timeout": 450000,
-        "audio_profiles_target": 1,
-        "class_inc_line_of_sight": 2,
-        "class_inc_recently_booted": 1,
-        "class_inc_binding_button": 15,
-        "class_inc_xr": 6,
-        "class_inc_bind_table_empty": 0,
-        "binding_state_timeout": 30,
-        "host_decryption": false,
-        "single_channel_rsp": true,
-        "ff_rsp_idle_time": 15,
-        "discovery_config": {
-            "enable": true,
-            "require_line_of_sight": false
-        },
-        "autobind_config": {
-            "enable": true,
-            "qty_pass": 3,
-            "qty_fail": 2
-        },
-        "binding_menu_mode": {
-            "class_increment": 0,
-            "discovery_config": {
-                "enable": true,
-                "require_line_of_sight": false
-            },
-            "autobind_config": {
-                "enable": true,
-                "qty_pass": 3,
-                "qty_fail": 2
-            }
-        },
-        "pairing_blackout": {
-            "enable": true,
-            "pairing_fail_threshold": 10,
-            "blackout_reboot_threshold": 20,
-            "blackout_time": 30,
-            "force_blackout_settings": false
-        },
-        "mfg_test": {
-            "enable": false,
-            "mic_delay": 3000,
-            "mic_duration": 4000,
-            "sweep_delay": 5000,
-            "haptic_delay": 2000,
-            "haptic_duration": 1000,
-            "reset_delay": 6000
-        },
-        "dpi_pattern": 0,
-        "polling": {
-            "target": {
-                "methods": 1,
-                "fmr_controllers_max": 1
-            },
-            "hb_generic_config": {
-                "uptime_multiplier": 3,
-                "hb_time_to_save": 1800
-            },
-            "default": {
-                "methods": 0,
-                "heartbeat": {
-                    "trigger": 0,
-                    "kp_counter": 0,
-                    "time_interval": 0
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            },
-            "xr11v2": {
-                "methods": 0,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 86400000
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            },
-            "xr15v1": {
-                "methods": 1,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 86400000
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            },
-            "xr15v2": {
-                "methods": 1,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 86400000
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            },
-            "xr16v1": {
-                "methods": 3,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 86400000
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            },
-            "xr19v1": {
-                "methods": 0,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 3000
-                }
-            },
-            "xrav1": {
-                "methods": 1,
-                "heartbeat": {
-                    "trigger": 1,
-                    "kp_counter": 0,
-                    "time_interval": 86400000
-                },
-                "mac": {
-                    "time_interval": 5000
-                }
-            }
-        },
-        "asb": {
-            "enable": false,
-            "derivation_methods": 128,
-            "fallback_threshold": 1,
-            "force_settings": false
-        },
-        "voice": {
-            "stream_begin": 1,
-            "stream_offset": -1600
-        },
-        "device_update": {
-            "session_timeout": 259200
-        },
-        "dsp": {
-            "flags": 0,
-            "vad_threshold": 128,
-            "no_vad_threshold": 128,
-            "vad_hang_time": 15,
-            "initial_eos_timeout": 35,
-            "eos_timeout": 50,
-            "initial_speech_delay": 8,
-            "primary_keyword_sensitivity": 32,
-            "secondary_keyword_sensitivity": 32,
-            "beamformer_type": 1,
-            "noise_reduction_aggressiveness": 11,
-            "dynamic_gain_target_level": -12,
-            "ic_atten_update": 255,
-            "ic_detect": 15,
-            "force_settings": false
-        },
-        "rsp_time": {
-            "xrc": 150,
-            "xvp": 500,
-            "xdiu": 155
-        }
-    },
+    "network_rf4ce": {},
     "network_ble": {
         "timeouts": {
             "discovery": 15000,
@@ -226,26 +44,6 @@
             "unpair": 20000
         },
         "models": [
-            {
-                "name": "PR1",
-                "scanNameFormat": "Platco PR1",
-                "otaProductName": "PR1-10",
-                "standbyMode": "C",
-                "services": {
-                    "type": "gatt",
-                    "required": [
-                        "Battery",
-                        "Device Info",
-                        "Immediate Alert",
-                        "RDK Voice",
-                        "RDK Infrared",
-                        "RDK Firmware Upgrade"
-                    ],
-                    "optional": [
-                        "RDK Remote Control"
-                    ]
-                }
-            },
             {
                 "name": "Tatlow RDK",
                 "scanNameFormat": "Tatlow RDK",
@@ -370,12 +168,6 @@
             }
         },
         "device_update_dirs": [
-            "XR11v2",
-            "XR15v1",
-            "XR15v2",
-            "XR16v1",
-            "XR19v1",
-            "XRAv1"
         ]
     },
     "vsdk": {
@@ -417,4 +209,3 @@
         }
     }
 }
-
